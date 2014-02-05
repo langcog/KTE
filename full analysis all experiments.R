@@ -227,6 +227,8 @@ conceptualFigDF = data.frame(panel = factor(c(rep("KTE",4),
                              illustrationData = factor(c(rep(0,4),rep(1,12)))
                              )
 
+blackGreyPalette <- c("#000000", "#999999")  
+
 ggplot(conceptualFigDF, aes(x=participant, y=reactionTime, colour=agent, group=agent, 
                             shape=illustrationData)) + 
   ylab("Reaction Time (ms)") + xlab("Participant Belief") +
@@ -246,6 +248,11 @@ ggplot(conceptualFigDF, aes(x=participant, y=reactionTime, colour=agent, group=a
   
 
 # ------------------ Plot Fig3: Studies 1-4 -- 9 panels in 2 rows ####
+mss <- aggregate(reactionTime ~ workerid + participant + agent + expt , d,mean)
+ms <- aggregate(reactionTime ~  participant + agent + expt , mss,mean)
+ms$ci.h <- aggregate(reactionTime ~  participant + agent + expt , mss, ci.high)$reactionTime
+ms$ci.l <- aggregate(reactionTime ~  participant + agent + expt , mss, ci.low)$reactionTime
+ms$n <- aggregate(workerid ~  participant + agent + expt , mss, n.unique)$workerid
 
 # with 2 rows:
 #1a, 1b, 1c, 2a Hit, 2b Hit
@@ -262,7 +269,7 @@ msSub$expt <- factor(msSub$expt, levels = c("1a: Web 1","1b: Web 2","1c: Lab", "
 blackGreyPalette <- c("#000000", "#999999")  
 
 ggplot(msSub, aes(x=participant, y=reactionTime, colour=agent, group=agent)) + 
-  ylab("Reaction Time (ms)") + 
+  ylab("Reaction Time (ms)") + ylim(390,1100) +
   xlab("Participant Belief") +
   guides(color=guide_legend(title="Agent Belief")) +
   geom_line(position=position_dodge(width=.1),stat="identity") +
@@ -272,6 +279,8 @@ ggplot(msSub, aes(x=participant, y=reactionTime, colour=agent, group=agent)) +
                  position=position_dodge(width=.1)) +
   theme(strip.background = element_rect(fill="#FFFFFF"))
 # pdf 9 by 6
+# square version: 9 by 4.
+# have to edit out the blank.
 # ------------------ End Plot Fig 3
 
 
@@ -303,7 +312,7 @@ blackGreyPalette <- c("#000000", "#999999")
 
 ## Fig 4, with lines:
 ggplot(msSub2, aes(x=participant, y=reactionTime, colour=agent, group=agent)) + 
-  ylab("Reaction Time (ms)") + 
+  ylab("Reaction Time (ms)") + ylim(390,1100) +
   xlab("Participant Belief") +
   guides(color=guide_legend(title="Agent Belief")) +
   geom_line(position=position_dodge(width=.1),stat="identity") +
@@ -312,6 +321,7 @@ ggplot(msSub2, aes(x=participant, y=reactionTime, colour=agent, group=agent)) +
   geom_linerange(aes(ymin=reactionTime - ci.l, ymax=reactionTime + ci.h), position=position_dodge(width=.1)) +
   theme(strip.background = element_rect(fill="#FFFFFF"))
 # Save as 8 by 5 pdf
+# square: 10 by 3
 
 ## Fig 5, MCF 12/12/13
 ggplot(aes(x=attentionTime,y=reactionTime,
@@ -324,8 +334,9 @@ ggplot(aes(x=attentionTime,y=reactionTime,
   guides(color=guide_legend(title="Video Condition")) +
   ggtitle("Study 8: Lightbulb timing") +
   ylab("Reaction Time (ms)") + 
-  xlab("Attention Check Time (s)")
+  xlab("Attention Check Time (s)") + ylim(390,1100)
 # Save as 5 by 5 pdf
+# square: 7 by 5
 
 # ------------------ End Plot Fig 4 and 5
 
