@@ -1,4 +1,3 @@
-#setwd("~/Dropbox/Stanford/2012-2013 Q2 Winter/Psych 254 Lab/Ong/Analysis")
 rm(list=ls())
 source("mcf.useful.R")
 
@@ -158,32 +157,57 @@ cohenD <- mean(manualDiff)/sd(manualDiff); cohenD
 #comparison1 = subset(d, d$expt=="3:Absent" & d$participant=="Absent" & d$agent=="Absent")
 #comparison2 = subset(d, d$expt=="3:Absent" & d$participant=="Present" & d$agent=="Absent")
 
+
+mss <- aggregate(reactionTime ~ workerid + participant + agent + expt , d,mean)
+
 # lmer for Study 1a
 summary(lmer(reactionTime ~ participant*agent + (1 + participant*agent|workerid), subset(mss,expt=="1a:Replication1")))
+ciUpper = 172.65 + 40.11 * 1.96; ciUpper # print CI
+ciLower = 172.65 - 40.11 * 1.96; ciLower # print CI
 2*(1-pnorm(4.304)) # print p-value.
+
 # lmer for Study 1b
 summary(lmer(reactionTime ~ participant*agent + (1 + participant*agent|workerid), subset(mss,expt=="1b:Replication2")))
+ciUpper = 121.81 + 28.6 * 1.96; ciUpper # print CI
+ciLower = 121.81 - 28.6 * 1.96; ciLower # print CI
 2*(1-pnorm(4.259)) # print p-value.
+
 # lmer for Study 1c
 summary(lmer(reactionTime ~ participant*agent + (1 + participant*agent|workerid), subset(mss,expt=="1c:LabReplication")))
+ciUpper = 65.71 + 26.52 * 1.96; ciUpper # print CI
+ciLower = 65.71 - 26.52 * 1.96; ciLower # print CI
 2*(1-pnorm(2.478)) # print p-value.
+
 ## lmer for Study 2a: 2AFC
 #summary(lmer(reactionTime ~ participant*agent + (1 + participant*agent|workerid), subset(mss,expt=="2a:2AFC")))
 #2*(1-pnorm(4.453)) # print p-value.
+
 # lmer for Study 2a: 2AFC CR
 summary(lmer(reactionTime ~ participant*agent + (1 + participant*agent|workerid), subset(mss,expt=="2a:2AFC,CR")))
+ciUpper = 213.48 + 55.47 * 1.96; ciUpper # print CI
+ciLower = 213.48 - 55.47 * 1.96; ciLower # print CI
 2*(1-pnorm(3.848)) # print p-value.
+
 # lmer for Study 2b: Lab 2AFC
 #summary(lmer(reactionTime ~ participant*agent + (1 + participant*agent|workerid), subset(mss,expt=="2b:Lab2AFC")))
 #2*(1-pnorm(4.281)) # print p-value.
+
 # lmer for Study 2b: Lab 2AFC CR
 summary(lmer(reactionTime ~ participant*agent + (1 + participant*agent|workerid), subset(mss,expt=="2b:Lab2AFC,CR")))
+ciUpper = 152.80 + 31.52 * 1.96; ciUpper # print CI
+ciLower = 152.80 - 31.52 * 1.96; ciLower # print CI
 2*(1-pnorm(4.847)) # print p-value.
+
 # lmer for Study 3: Absent
 summary(lmer(reactionTime ~ participant*agent + (1 + participant*agent|workerid), subset(mss,expt=="3:Absent")))
+ciUpper = 171.47 + 28.33 * 1.96; ciUpper # print CI
+ciLower = 171.47 - 28.33 * 1.96; ciLower # print CI
 2*(1-pnorm(6.0653)) # print p-value.
+
 # lmer for Study 4: Occluder
 summary(lmer(reactionTime ~ participant*agent + (1 + participant*agent|workerid), subset(mss,expt=="4:Occluder")))
+ciUpper = 113.71 + 32.74 * 1.96; ciUpper # print CI
+ciLower = 113.71 - 32.74 * 1.96; ciLower # print CI
 2*(1-pnorm(3.473)) # print p-value.
 
 # --- End Crossover interaction section comparisons ---
@@ -219,9 +243,9 @@ conceptualFigDF = data.frame(panel = factor(c(rep("KTE",4),
                              participant = factor(rep(c("Absent","Present"),2*4)),
                              agent = factor(rep(c("Absent", "Absent", "Present", "Present"),4)),
                              reactionTime = c( c(360,320,328,313), #KTE
-                                               c(350,340,320,310), #Ball Present prediction
-                                               c(310,320,340,350), #Ball Absent prediction
-                                               c(350,340,346,336)), #Occluder prediction
+                                               c(350,330,330,310), #Ball Present prediction
+                                               c(310,330,330,350), #Ball Absent prediction
+                                               c(350,330,346,326)), #Occluder prediction
                              ci.h = c(c(14, 10, 12, 10)*1.96, rep(NA,12)),
                              ci.l = c(c(14, 10, 12, 10)*1.96, rep(NA,12)),
                              illustrationData = factor(c(rep(0,4),rep(1,12)))
@@ -264,7 +288,7 @@ msSub$expt <- factor(msSub$expt)
 levels(msSub$expt) <- c("1a: Web 1","1b: Web 2","1c: Lab",
                         "2a: Web 2AFC", "2a: Web 2AFC, CR","2b: Lab 2AFC", "2b: Lab 2AFC, CR", "3:Absent", "4:Occluder")
 msSub$expt <- factor(msSub$expt, levels = c("1a: Web 1","1b: Web 2","1c: Lab", "2a: Web 2AFC", "2b: Lab 2AFC", 
-                                            "2a: Web 2AFC, CR","2b: Lab 2AFC, CR", "3:Absent", "blank", "4:Occluder"))
+                                            "2a: Web 2AFC, CR","2b: Lab 2AFC, CR", "3:Absent", "4:Occluder"))
 
 blackGreyPalette <- c("#000000", "#999999")  
 
@@ -280,7 +304,6 @@ ggplot(msSub, aes(x=participant, y=reactionTime, colour=agent, group=agent)) +
   theme(strip.background = element_rect(fill="#FFFFFF"))
 # pdf 9 by 6
 # square version: 9 by 4.
-# have to edit out the blank.
 # ------------------ End Plot Fig 3
 
 
@@ -334,7 +357,7 @@ ggplot(aes(x=attentionTime,y=reactionTime,
   guides(color=guide_legend(title="Video Condition")) +
   ggtitle("Study 8: Lightbulb timing") +
   ylab("Reaction Time (ms)") + 
-  xlab("Attention Check Time (s)") + ylim(390,1100)
+  xlab("Attention Check Time (s)") + ylim(500,900)
 # Save as 5 by 5 pdf
 # square: 7 by 5
 
@@ -346,17 +369,30 @@ ggplot(aes(x=attentionTime,y=reactionTime,
 
 # lmer for Study 5: No Attention
 summary(lmer(reactionTime ~ participant*agent + (1 + participant*agent|workerid), subset(mss,expt=="5:NoAttn")))
+ciUpper = 21.72 + 35.27 * 1.96; ciUpper # print CI
+ciLower = 21.72 - 35.27 * 1.96; ciLower # print CI
 2*(1-pnorm(0.616)) # print p-value.
+
 # lmer for Study 6: Attention at 19s
 summary(lmer(reactionTime ~ participant*agent + (1 + participant*agent|workerid), subset(mss,expt=="6:Attn19s")))
+ciUpper = 12.012 + 22.78 * 1.96; ciUpper # print CI
+ciLower = 12.012 - 22.78 * 1.96; ciLower # print CI
 2*(1-pnorm(0.528)) # print p-value.
+
 # lmer for Study 7: No Agent, with lightbulb
 summary(lmer(reactionTime ~ participant*agent + (1 + participant*agent|workerid), subset(mss,expt=="7:NoAgent,LB")))
+ciUpper = 90.36 + 27.02 * 1.96; ciUpper # print CI
+ciLower = 90.36 - 27.02 * 1.96; ciLower # print CI
 2*(1-pnorm(3.34)) # print p-value.
+
 # lmer for Study 8: Lightbulb x Times
 summary(lmer(reactionTime ~ participant*agent + (1 + participant*agent|workerid), subset(mss,expt=="8:LBtimes")))
+ciUpper = 6.299 + 27.37 * 1.96; ciUpper # print CI
+ciLower = 6.299 - 27.37 * 1.96; ciLower # print CI
 2*(1-pnorm(0.23)) # print p-value.
 
 # for Study 8, comparing with attentioncheck
 summary(lmer(reactionTime ~ participant*agent + attentionTime + (1 + participant*agent|workerid), mssAll))
+ciUpper = 9.512 + 2.101 * 1.96; ciUpper # print CI
+ciLower = 9.512 - 2.101 * 1.96; ciLower # print CI
 2*(1-pnorm(4.528)) # print p-value.
