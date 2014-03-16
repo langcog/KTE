@@ -291,6 +291,32 @@ ciUpper = 113.71 + 32.74 * 1.96; ciUpper # print CI
 ciLower = 113.71 - 32.74 * 1.96; ciLower # print CI
 2*(1-pnorm(3.473)) # print p-value.
 
+
+# Tests for differences by response type ("Present" vs "Absent") across Studies1-3
+allStudies1to3 = subset(d, d$expt=="1a:Replication1" | d$expt=="1b:Replication2" | d$expt=="2a:2AFC" |
+                             d$expt=="2a:2AFC,CR" | d$expt=="3:Absent" | d$expt=="1c:LabReplication"  | 
+                          d$expt=="2b:Lab2AFC" | d$expt=="2b:Lab2AFC,CR" )
+
+allStudies1to3$Absent <- allStudies1to3$expt == "2a:2AFC,CR" | allStudies1to3$expt=="2b:Lab2AFC,CR" | 
+  allStudies1to3$expt=="3:Absent"
+
+# this tests whether there is a difference in CR/Absent conditions
+crmod <- lmer(reactionTime ~ participant*agent*Absent +  
+               (participant*agent|workerid), 
+             data=allStudies1to3)
+summary(crmod)
+# cr coefficient
+fixef(crmod)[4]
+fixef(crmod)[4] + summary(crmod)$coefficients[4,2] * 1.96
+fixef(crmod)[4] - summary(crmod)$coefficients[4,2] * 1.96
+
+2*(1-pnorm(1.68)) # for the interaction t
+
+fixef(crmod)[5]
+fixef(crmod)[5] + summary(crmod)$coefficients[5,2] * 1.96
+fixef(crmod)[5] - summary(crmod)$coefficients[5,2] * 1.96
+
+
 #### ---- End Crossover interaction section comparisons for Studies1-4 ----####
 #########
 
