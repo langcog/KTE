@@ -64,89 +64,168 @@ length(unique(d$workerid))
 
 #### --- t-test for replications --- ####
 
-# see: http://easycalculation.com/statistics/effect-size-t-test.php
-# r = sqrt( ( t2 ) / ( ( t2 ) + ( df * 1) ) )
-# d = ( t*2 ) / ( sqrt(df) )
+# Calculating KTE's Cohen's d's
+#tValue <- 3.47
+#cohenD <- (tValue / sqrt(23))
+#cohenD
 library(lsr)
+
+# helper functions
+myCalculateCohensD <- function (comparison1, comparison2) {
+  c1aggregate <- aggregate(reactionTime ~ workerid + participant + agent, comparison1, mean)
+  c1aggregate = c1aggregate[order(c1aggregate$workerid),]
+  c2aggregate <- aggregate(reactionTime ~ workerid + participant + agent, comparison2, mean)
+  c2aggregate = c2aggregate[order(c2aggregate$workerid),]
+  #c1aggregate$workerid == c2aggregate$workerid # to check that the ordering are the same.
+  
+  manualDiff <- c1aggregate$reactionTime - c2aggregate$reactionTime
+  #stanDev <- sd(manualDiff)
+  #tStat <- mean(manualDiff)/sd(manualDiff) * sqrt(length(manualDiff))
+  cohenD <- mean(manualDiff)/sd(manualDiff); 
+  return(cohenD)
+}
+
+myCalculateTTest <- function (comparison1, comparison2) {
+  c1aggregate <- aggregate(reactionTime ~ workerid + participant + agent, comparison1, mean)
+  c1aggregate = c1aggregate[order(c1aggregate$workerid),]
+  c2aggregate <- aggregate(reactionTime ~ workerid + participant + agent, comparison2, mean)
+  c2aggregate = c2aggregate[order(c2aggregate$workerid),]
+  c1aggregate$workerid == c2aggregate$workerid
+  return(t.test(c1aggregate$reactionTime, c2aggregate$reactionTime, paired=TRUE))
+}
+
+
+
+
+
 # Simple t-tests to replicate KTE:
 # P-A- - P+A+
 # P-A- - P+A-
 # P-A- - P-A+
 # P-A+ - P+A-
 
-# P-A- - P+A+
+### for Studies 1a,b,c ###
+#---- P-A- - P+A+ ----#
 comparison1 = subset(d, d$expt=="1a:Replication1" & d$participant=="Absent" & d$agent=="Absent")
 comparison2 = subset(d, d$expt=="1a:Replication1" & d$participant=="Present" & d$agent=="Present")
+myCalculateCohensD(comparison1, comparison2)
+myCalculateTTest(comparison1, comparison2)
+
 comparison1 = subset(d, d$expt=="1b:Replication2" & d$participant=="Absent" & d$agent=="Absent")
 comparison2 = subset(d, d$expt=="1b:Replication2" & d$participant=="Present" & d$agent=="Present")
+myCalculateCohensD(comparison1, comparison2)
+myCalculateTTest(comparison1, comparison2)
+
 comparison1 = subset(d, d$expt=="1c:LabReplication" & d$participant=="Absent" & d$agent=="Absent")
 comparison2 = subset(d, d$expt=="1c:LabReplication" & d$participant=="Present" & d$agent=="Present")
+myCalculateCohensD(comparison1, comparison2)
+myCalculateTTest(comparison1, comparison2)
 
-# P-A- - P+A-
+
+#---- P-A- - P+A- ----#
 comparison1 = subset(d, d$expt=="1a:Replication1" & d$participant=="Absent" & d$agent=="Absent")
 comparison2 = subset(d, d$expt=="1a:Replication1" & d$participant=="Present" & d$agent=="Absent")
+myCalculateCohensD(comparison1, comparison2)
+myCalculateTTest(comparison1, comparison2)
+
 comparison1 = subset(d, d$expt=="1b:Replication2" & d$participant=="Absent" & d$agent=="Absent")
 comparison2 = subset(d, d$expt=="1b:Replication2" & d$participant=="Present" & d$agent=="Absent")
+myCalculateCohensD(comparison1, comparison2)
+myCalculateTTest(comparison1, comparison2)
+
 comparison1 = subset(d, d$expt=="1c:LabReplication" & d$participant=="Absent" & d$agent=="Absent")
 comparison2 = subset(d, d$expt=="1c:LabReplication" & d$participant=="Present" & d$agent=="Absent")
+myCalculateCohensD(comparison1, comparison2)
+myCalculateTTest(comparison1, comparison2)
 
-# P-A- - P-A+
+
+#---- P-A- - P-A+ ---- #
 comparison1 = subset(d, d$expt=="1a:Replication1" & d$participant=="Absent" & d$agent=="Absent")
 comparison2 = subset(d, d$expt=="1a:Replication1" & d$participant=="Absent" & d$agent=="Present")
+myCalculateCohensD(comparison1, comparison2)
+myCalculateTTest(comparison1, comparison2)
+
 comparison1 = subset(d, d$expt=="1b:Replication2" & d$participant=="Absent" & d$agent=="Absent")
 comparison2 = subset(d, d$expt=="1b:Replication2" & d$participant=="Absent" & d$agent=="Present")
+myCalculateCohensD(comparison1, comparison2)
+myCalculateTTest(comparison1, comparison2)
+
 comparison1 = subset(d, d$expt=="1c:LabReplication" & d$participant=="Absent" & d$agent=="Absent")
 comparison2 = subset(d, d$expt=="1c:LabReplication" & d$participant=="Absent" & d$agent=="Present")
+myCalculateCohensD(comparison1, comparison2)
+myCalculateTTest(comparison1, comparison2)
 
-# P-A+ - P+A-
+
+
+#---- P-A+ - P+A- ---- #
 comparison1 = subset(d, d$expt=="1a:Replication1" & d$participant=="Absent" & d$agent=="Present")
 comparison2 = subset(d, d$expt=="1a:Replication1" & d$participant=="Present" & d$agent=="Absent")
+myCalculateCohensD(comparison1, comparison2)
+myCalculateTTest(comparison1, comparison2)
+
 comparison1 = subset(d, d$expt=="1b:Replication2" & d$participant=="Absent" & d$agent=="Present")
 comparison2 = subset(d, d$expt=="1b:Replication2" & d$participant=="Present" & d$agent=="Absent")
+myCalculateCohensD(comparison1, comparison2)
+myCalculateTTest(comparison1, comparison2)
+
 comparison1 = subset(d, d$expt=="1c:LabReplication" & d$participant=="Absent" & d$agent=="Present")
 comparison2 = subset(d, d$expt=="1c:LabReplication" & d$participant=="Present" & d$agent=="Absent")
+myCalculateCohensD(comparison1, comparison2)
+myCalculateTTest(comparison1, comparison2)
 
-c1aggregate <- aggregate(reactionTime ~ workerid + participant + agent, comparison1, mean)
-c1aggregate = c1aggregate[order(c1aggregate$workerid),]
-c2aggregate <- aggregate(reactionTime ~ workerid + participant + agent, comparison2, mean)
-c2aggregate = c2aggregate[order(c2aggregate$workerid),]
-c1aggregate$workerid == c2aggregate$workerid
-t.test(c1aggregate$reactionTime, c2aggregate$reactionTime, paired=TRUE)
 
-manualDiff <- c1aggregate$reactionTime - c2aggregate$reactionTime
-stanDev <- sd(manualDiff)
-tStat <- mean(manualDiff)/sd(manualDiff) * sqrt(length(manualDiff))
-cohenD <- mean(manualDiff)/sd(manualDiff); cohenD
-
-# Calculating KTE's Cohen's d's
-#tValue <- 3.47
-#cohenD <- (tValue / sqrt(23))
-#cohenD
 
 #########
 # --- Crossover interaction section comparisons --- ####
 # Additional comparisons: P+A+>P+A- and P+A+>P-A+
   comparison1 = subset(d, d$expt=="1a:Replication1" & d$participant=="Present" & d$agent=="Present")
   comparison2 = subset(d, d$expt=="1a:Replication1" & d$participant=="Present" & d$agent=="Absent")
+  myCalculateCohensD(comparison1, comparison2)
+  myCalculateTTest(comparison1, comparison2)
+
   comparison1 = subset(d, d$expt=="1b:Replication2" & d$participant=="Present" & d$agent=="Present")
   comparison2 = subset(d, d$expt=="1b:Replication2" & d$participant=="Present" & d$agent=="Absent")
+  myCalculateCohensD(comparison1, comparison2)
+  myCalculateTTest(comparison1, comparison2)
+
   comparison1 = subset(d, d$expt=="1c:LabReplication" & d$participant=="Present" & d$agent=="Present")
   comparison2 = subset(d, d$expt=="1c:LabReplication" & d$participant=="Present" & d$agent=="Absent")
+  myCalculateCohensD(comparison1, comparison2)
+  myCalculateTTest(comparison1, comparison2)
+
+
 
   comparison1 = subset(d, d$expt=="1a:Replication1" & d$participant=="Present" & d$agent=="Present")
   comparison2 = subset(d, d$expt=="1a:Replication1" & d$participant=="Absent" & d$agent=="Present")
+  myCalculateCohensD(comparison1, comparison2)
+  myCalculateTTest(comparison1, comparison2)
+
   comparison1 = subset(d, d$expt=="1b:Replication2" & d$participant=="Present" & d$agent=="Present")
   comparison2 = subset(d, d$expt=="1b:Replication2" & d$participant=="Absent" & d$agent=="Present")
+  myCalculateCohensD(comparison1, comparison2)
+  myCalculateTTest(comparison1, comparison2)
+
   comparison1 = subset(d, d$expt=="1c:LabReplication" & d$participant=="Present" & d$agent=="Present")
   comparison2 = subset(d, d$expt=="1c:LabReplication" & d$participant=="Absent" & d$agent=="Present")
+  myCalculateCohensD(comparison1, comparison2)
+  myCalculateTTest(comparison1, comparison2)
+
 
 # for Studies 2a-b, 3 : P-A+ - P-A-
   comparison1 = subset(d, d$expt=="2a:2AFC,CR" & d$participant=="Absent" & d$agent=="Present")
   comparison2 = subset(d, d$expt=="2a:2AFC,CR" & d$participant=="Absent" & d$agent=="Absent")
+  myCalculateCohensD(comparison1, comparison2)
+  myCalculateTTest(comparison1, comparison2)
+
   comparison1 = subset(d, d$expt=="2b:Lab2AFC,CR" & d$participant=="Absent" & d$agent=="Present")
   comparison2 = subset(d, d$expt=="2b:Lab2AFC,CR" & d$participant=="Absent" & d$agent=="Absent")
+  myCalculateCohensD(comparison1, comparison2)
+  myCalculateTTest(comparison1, comparison2)
+
   comparison1 = subset(d, d$expt=="3:Absent" & d$participant=="Absent" & d$agent=="Present")
   comparison2 = subset(d, d$expt=="3:Absent" & d$participant=="Absent" & d$agent=="Absent")
+  myCalculateCohensD(comparison1, comparison2)
+  myCalculateTTest(comparison1, comparison2)
 
 
 ## for Studies 2a-b, 3 : P-A- - P+A-
@@ -157,6 +236,8 @@ cohenD <- mean(manualDiff)/sd(manualDiff); cohenD
 #comparison1 = subset(d, d$expt=="3:Absent" & d$participant=="Absent" & d$agent=="Absent")
 #comparison2 = subset(d, d$expt=="3:Absent" & d$participant=="Present" & d$agent=="Absent")
 
+
+#### ---- Mixed model analysis for studies 1-4 ---- ####
 
 mss <- aggregate(reactionTime ~ workerid + participant + agent + expt , d,mean)
 
@@ -210,11 +291,12 @@ ciUpper = 113.71 + 32.74 * 1.96; ciUpper # print CI
 ciLower = 113.71 - 32.74 * 1.96; ciLower # print CI
 2*(1-pnorm(3.473)) # print p-value.
 
-# --- End Crossover interaction section comparisons ---
+#### ---- End Crossover interaction section comparisons for Studies1-4 ----####
 #########
 
-### BEGIN
-#d$first.half <- d$trialNum < 20 
+#### ---- Start Fig sections ---- ####
+
+### Preprocessing for Figures
 mss <- aggregate(reactionTime ~ workerid + participant + agent + expt , d,mean)
 ms <- aggregate(reactionTime ~  participant + agent + expt , mss,mean)
 ms$ci.h <- aggregate(reactionTime ~  participant + agent + expt , mss, ci.high)$reactionTime
@@ -272,12 +354,6 @@ ggplot(conceptualFigDF, aes(x=participant, y=reactionTime, colour=agent, group=a
   
 
 # ------------------ Plot Fig3: Studies 1-4 -- 9 panels in 2 rows ####
-mss <- aggregate(reactionTime ~ workerid + participant + agent + expt , d,mean)
-ms <- aggregate(reactionTime ~  participant + agent + expt , mss,mean)
-ms$ci.h <- aggregate(reactionTime ~  participant + agent + expt , mss, ci.high)$reactionTime
-ms$ci.l <- aggregate(reactionTime ~  participant + agent + expt , mss, ci.low)$reactionTime
-ms$n <- aggregate(workerid ~  participant + agent + expt , mss, n.unique)$workerid
-
 # with 2 rows:
 #1a, 1b, 1c, 2a Hit, 2b Hit
 #2a CR, 2b CR, Absent, <BLANK>, 4:Occluder
@@ -365,33 +441,188 @@ ggplot(aes(x=attentionTime,y=reactionTime,
 
 
 
-#### ---- Stats for Studies 5-8 ---- ####
+#### ---- Mixed Model Stats and Pairwise differences for Studies 5-8 ---- ####
 
-# lmer for Study 5: No Attention
+
+#### ---- Study 5: No Attention ---- ####
 summary(lmer(reactionTime ~ participant*agent + (1 + participant*agent|workerid), subset(mss,expt=="5:NoAttn")))
 ciUpper = 21.72 + 35.27 * 1.96; ciUpper # print CI
 ciLower = 21.72 - 35.27 * 1.96; ciLower # print CI
 2*(1-pnorm(0.616)) # print p-value.
 
-# lmer for Study 6: Attention at 19s
+# P-A- - P+A+
+comparison1 = subset(d, d$expt=="5:NoAttn" & d$participant=="Absent" & d$agent=="Absent")
+comparison2 = subset(d, d$expt=="5:NoAttn" & d$participant=="Present" & d$agent=="Present")
+myCalculateCohensD(comparison1, comparison2)
+myCalculateTTest(comparison1, comparison2)
+
+# P-A- - P+A-
+comparison1 = subset(d, d$expt=="5:NoAttn" & d$participant=="Absent" & d$agent=="Absent")
+comparison2 = subset(d, d$expt=="5:NoAttn" & d$participant=="Present" & d$agent=="Absent")
+myCalculateCohensD(comparison1, comparison2)
+myCalculateTTest(comparison1, comparison2)
+
+# P-A- - P-A+
+comparison1 = subset(d, d$expt=="5:NoAttn" & d$participant=="Absent" & d$agent=="Absent")
+comparison2 = subset(d, d$expt=="5:NoAttn" & d$participant=="Absent" & d$agent=="Present")
+myCalculateCohensD(comparison1, comparison2)
+myCalculateTTest(comparison1, comparison2)
+
+# P-A+ - P+A-
+comparison1 = subset(d, d$expt=="5:NoAttn" & d$participant=="Absent" & d$agent=="Present")
+comparison2 = subset(d, d$expt=="5:NoAttn" & d$participant=="Present" & d$agent=="Absent")
+myCalculateCohensD(comparison1, comparison2)
+myCalculateTTest(comparison1, comparison2)
+
+# the first 4 were the "Table 1 comparisons", these last 2 are the last 2 comparisons (4C2 = 6)
+# P-A+ - P+A+
+comparison1 = subset(d, d$expt=="5:NoAttn" & d$participant=="Absent" & d$agent=="Present")
+comparison2 = subset(d, d$expt=="5:NoAttn" & d$participant=="Present" & d$agent=="Present")
+myCalculateCohensD(comparison1, comparison2)
+myCalculateTTest(comparison1, comparison2)
+
+# P+A- - P+A+
+comparison1 = subset(d, d$expt=="5:NoAttn" & d$participant=="Present" & d$agent=="Absent")
+comparison2 = subset(d, d$expt=="5:NoAttn" & d$participant=="Present" & d$agent=="Present")
+myCalculateCohensD(comparison1, comparison2)
+myCalculateTTest(comparison1, comparison2)
+
+
+####---- Study 6: Attention at 19s ---- ####
 summary(lmer(reactionTime ~ participant*agent + (1 + participant*agent|workerid), subset(mss,expt=="6:Attn19s")))
 ciUpper = 12.012 + 22.78 * 1.96; ciUpper # print CI
 ciLower = 12.012 - 22.78 * 1.96; ciLower # print CI
 2*(1-pnorm(0.528)) # print p-value.
 
-# lmer for Study 7: No Agent, with lightbulb
+
+# P-A- - P+A+
+comparison1 = subset(d, d$expt=="6:Attn19s" & d$participant=="Absent" & d$agent=="Absent")
+comparison2 = subset(d, d$expt=="6:Attn19s" & d$participant=="Present" & d$agent=="Present")
+myCalculateCohensD(comparison1, comparison2)
+myCalculateTTest(comparison1, comparison2)
+
+# P-A- - P+A-
+comparison1 = subset(d, d$expt=="6:Attn19s" & d$participant=="Absent" & d$agent=="Absent")
+comparison2 = subset(d, d$expt=="6:Attn19s" & d$participant=="Present" & d$agent=="Absent")
+myCalculateCohensD(comparison1, comparison2)
+myCalculateTTest(comparison1, comparison2)
+
+# P-A- - P-A+
+comparison1 = subset(d, d$expt=="6:Attn19s" & d$participant=="Absent" & d$agent=="Absent")
+comparison2 = subset(d, d$expt=="6:Attn19s" & d$participant=="Absent" & d$agent=="Present")
+myCalculateCohensD(comparison1, comparison2)
+myCalculateTTest(comparison1, comparison2)
+
+# P-A+ - P+A-
+comparison1 = subset(d, d$expt=="6:Attn19s" & d$participant=="Absent" & d$agent=="Present")
+comparison2 = subset(d, d$expt=="6:Attn19s" & d$participant=="Present" & d$agent=="Absent")
+myCalculateCohensD(comparison1, comparison2)
+myCalculateTTest(comparison1, comparison2)
+
+# the first 4 were the "Table 1 comparisons", these last 2 are the last 2 comparisons (4C2 = 6)
+# P-A+ - P+A+
+comparison1 = subset(d, d$expt=="6:Attn19s" & d$participant=="Absent" & d$agent=="Present")
+comparison2 = subset(d, d$expt=="6:Attn19s" & d$participant=="Present" & d$agent=="Present")
+myCalculateCohensD(comparison1, comparison2)
+myCalculateTTest(comparison1, comparison2)
+
+# P+A- - P+A+
+comparison1 = subset(d, d$expt=="6:Attn19s" & d$participant=="Present" & d$agent=="Absent")
+comparison2 = subset(d, d$expt=="6:Attn19s" & d$participant=="Present" & d$agent=="Present")
+myCalculateCohensD(comparison1, comparison2)
+myCalculateTTest(comparison1, comparison2)
+
+
+#### ---- Study 7: No Agent, with lightbulb ---- ####
 summary(lmer(reactionTime ~ participant*agent + (1 + participant*agent|workerid), subset(mss,expt=="7:NoAgent,LB")))
 ciUpper = 90.36 + 27.02 * 1.96; ciUpper # print CI
 ciLower = 90.36 - 27.02 * 1.96; ciLower # print CI
 2*(1-pnorm(3.34)) # print p-value.
 
-# lmer for Study 8: Lightbulb x Times
+# P-A- - P+A+ n.s.
+comparison1 = subset(d, d$expt=="7:NoAgent,LB" & d$participant=="Absent" & d$agent=="Absent")
+comparison2 = subset(d, d$expt=="7:NoAgent,LB" & d$participant=="Present" & d$agent=="Present")
+myCalculateCohensD(comparison1, comparison2)
+myCalculateTTest(comparison1, comparison2)
+
+# P-A- - P+A- sig
+comparison1 = subset(d, d$expt=="7:NoAgent,LB" & d$participant=="Absent" & d$agent=="Absent")
+comparison2 = subset(d, d$expt=="7:NoAgent,LB" & d$participant=="Present" & d$agent=="Absent")
+myCalculateCohensD(comparison1, comparison2)
+myCalculateTTest(comparison1, comparison2)
+
+# P-A- - P-A+ trending
+comparison1 = subset(d, d$expt=="7:NoAgent,LB" & d$participant=="Absent" & d$agent=="Absent")
+comparison2 = subset(d, d$expt=="7:NoAgent,LB" & d$participant=="Absent" & d$agent=="Present")
+myCalculateCohensD(comparison1, comparison2)
+myCalculateTTest(comparison1, comparison2)
+
+# P-A+ - P+A- n.s.
+comparison1 = subset(d, d$expt=="7:NoAgent,LB" & d$participant=="Absent" & d$agent=="Present")
+comparison2 = subset(d, d$expt=="7:NoAgent,LB" & d$participant=="Present" & d$agent=="Absent")
+myCalculateCohensD(comparison1, comparison2)
+myCalculateTTest(comparison1, comparison2)
+
+# the first 4 were the "Table 1 comparisons", these last 2 are the last 2 comparisons (4C2 = 6)
+# P-A+ - P+A+ sig
+comparison1 = subset(d, d$expt=="7:NoAgent,LB" & d$participant=="Absent" & d$agent=="Present")
+comparison2 = subset(d, d$expt=="7:NoAgent,LB" & d$participant=="Present" & d$agent=="Present")
+myCalculateCohensD(comparison1, comparison2)
+myCalculateTTest(comparison1, comparison2)
+
+# P+A- - P+A+ sig
+comparison1 = subset(d, d$expt=="7:NoAgent,LB" & d$participant=="Present" & d$agent=="Absent")
+comparison2 = subset(d, d$expt=="7:NoAgent,LB" & d$participant=="Present" & d$agent=="Present")
+myCalculateCohensD(comparison1, comparison2)
+myCalculateTTest(comparison1, comparison2)
+# this diff is negative, meaning that RT(P+A+) is longer than RT(P+A-)
+
+
+#### ---- Study 8: Lightbulb x Times ---- ####
 summary(lmer(reactionTime ~ participant*agent + (1 + participant*agent|workerid), subset(mss,expt=="8:LBtimes")))
 ciUpper = 6.299 + 27.37 * 1.96; ciUpper # print CI
 ciLower = 6.299 - 27.37 * 1.96; ciLower # print CI
 2*(1-pnorm(0.23)) # print p-value.
 
-# for Study 8, comparing with attentioncheck
+# P-A- - P+A+
+comparison1 = subset(d, d$expt=="8:LBtimes" & d$participant=="Absent" & d$agent=="Absent")
+comparison2 = subset(d, d$expt=="8:LBtimes" & d$participant=="Present" & d$agent=="Present")
+myCalculateCohensD(comparison1, comparison2)
+myCalculateTTest(comparison1, comparison2)
+
+# P-A- - P+A-
+comparison1 = subset(d, d$expt=="8:LBtimes" & d$participant=="Absent" & d$agent=="Absent")
+comparison2 = subset(d, d$expt=="8:LBtimes" & d$participant=="Present" & d$agent=="Absent")
+myCalculateCohensD(comparison1, comparison2)
+myCalculateTTest(comparison1, comparison2)
+
+# P-A- - P-A+
+comparison1 = subset(d, d$expt=="8:LBtimes" & d$participant=="Absent" & d$agent=="Absent")
+comparison2 = subset(d, d$expt=="8:LBtimes" & d$participant=="Absent" & d$agent=="Present")
+myCalculateCohensD(comparison1, comparison2)
+myCalculateTTest(comparison1, comparison2)
+
+# P-A+ - P+A-
+comparison1 = subset(d, d$expt=="8:LBtimes" & d$participant=="Absent" & d$agent=="Present")
+comparison2 = subset(d, d$expt=="8:LBtimes" & d$participant=="Present" & d$agent=="Absent")
+myCalculateCohensD(comparison1, comparison2)
+myCalculateTTest(comparison1, comparison2)
+
+# the first 4 were the "Table 1 comparisons", these last 2 are the last 2 comparisons (4C2 = 6)
+# P-A+ - P+A+
+comparison1 = subset(d, d$expt=="8:LBtimes" & d$participant=="Absent" & d$agent=="Present")
+comparison2 = subset(d, d$expt=="8:LBtimes" & d$participant=="Present" & d$agent=="Present")
+myCalculateCohensD(comparison1, comparison2)
+myCalculateTTest(comparison1, comparison2)
+
+# P+A- - P+A+
+comparison1 = subset(d, d$expt=="8:LBtimes" & d$participant=="Present" & d$agent=="Absent")
+comparison2 = subset(d, d$expt=="8:LBtimes" & d$participant=="Present" & d$agent=="Present")
+myCalculateCohensD(comparison1, comparison2)
+myCalculateTTest(comparison1, comparison2)
+
+
+# for Study 8, using attentioncheck as a predictor
 summary(lmer(reactionTime ~ participant*agent + attentionTime + (1 + participant*agent|workerid), mssAll))
 ciUpper = 9.512 + 2.101 * 1.96; ciUpper # print CI
 ciLower = 9.512 - 2.101 * 1.96; ciLower # print CI
