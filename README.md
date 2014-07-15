@@ -1,9 +1,9 @@
-KTE
+KTE Replication Project
 ===
 
-This repository contains the supporting materials for the following paper:
+This repository contains the supporting materials for the following manuscript:
 
-Phillips, J., Ong, D. C., Surtees, A. D. R., Xin, Y., Williams, S., Saxe, R., & Frank, M. C. (in prep). A second look at automatic false belief representation: reconsidering Kovács, Téglás, and Endress (2010).
+Phillips, J., Ong, D. C., Surtees, A. D. R., Xin, Y., Williams, S., Saxe, R., & Frank, M. C. (submitted). A second look at automatic false belief representation: reconsidering Kovács, Téglás, and Endress (2010).
 
 The analysis code (in R) is in "full analysis all experiments.R". The code will read in the various datafiles ("studyX.csv") and perform the same analyses that we report in the paper, along with code to reproduce the graphs.
 
