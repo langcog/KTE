@@ -562,6 +562,52 @@ comparison2 = subset(d, d$expt=="5a:NoAttn" & d$participant=="Present" & d$agent
 myCalculateCohensD(comparison1, comparison2)
 myCalculateTTest(comparison1, comparison2)
 
+#### ---- Study 5b: With and without Attention check ---- ####
+
+# no attention check
+summary(lmer(reactionTime ~ participant*agent + (1 + participant*agent|workerid), subset(d, expt=="5b:NoAttn")))
+ciUpper = 62.40 + 29.65 * 1.96; ciUpper # print CI
+ciLower = 62.40 - 29.65 * 1.96; ciLower # print CI
+2*(1-pnorm(2.10)) # print p-value.
+
+# attention check
+summary(lmer(reactionTime ~ participant*agent + (1 + participant*agent|workerid), subset(d, expt=="5b:Attn")))
+ciUpper = 139.12 + 26.69 * 1.96; ciUpper # print CI
+ciLower = 139.12 - 26.69 * 1.96; ciLower # print CI
+2*(1-pnorm(5.21)) # print p-value.
+
+
+
+
+# no attention check and it's the first block
+mss5b <- aggregate(reactionTime ~ workerid + participant + agent , subset(d, expt=="5b:NoAttn" & trialNum < 25) ,mean)
+summary(lmer(reactionTime ~ participant*agent + (1 + participant*agent|workerid), mss5b))
+ciUpper = 77.96 + 49.47 * 1.96; ciUpper # print CI
+ciLower = 77.96 - 49.47 * 1.96; ciLower # print CI
+2*(1-pnorm(1.576)) # print p-value.
+
+# no attention check and it's the second block
+mss5b <- aggregate(reactionTime ~ workerid + participant + agent , subset(d, expt=="5b:NoAttn" & trialNum > 24) ,mean)
+summary(lmer(reactionTime ~ participant*agent + (1 + participant*agent|workerid), mss5b))
+ciUpper = 50.44 + 39.25 * 1.96; ciUpper # print CI
+ciLower = 50.44 - 39.25 * 1.96; ciLower # print CI
+2*(1-pnorm(1.285)) # print p-value.
+
+# attention check and it's the first block
+mss5b <- aggregate(reactionTime ~ workerid + participant + agent , subset(d, expt=="5b:Attn" & trialNum < 25) ,mean)
+summary(lmer(reactionTime ~ participant*agent + (1 + participant*agent|workerid), mss5b))
+ciUpper = 84.42 + 34.39 * 1.96; ciUpper # print CI
+ciLower = 84.42 - 34.39 * 1.96; ciLower # print CI
+2*(1-pnorm(2.455)) # print p-value.
+
+# attention check and it's the second block
+mss5b <- aggregate(reactionTime ~ workerid + participant + agent , subset(d, expt=="5b:Attn" & trialNum > 24) ,mean)
+summary(lmer(reactionTime ~ participant*agent + (1 + participant*agent|workerid), mss5b))
+ciUpper = 183.05 + 38.78 * 1.96; ciUpper # print CI
+ciLower = 183.05 - 38.78 * 1.96; ciLower # print CI
+2*(1-pnorm(4.720)) # print p-value.
+
+
 
 ####---- Study 6: Attention at 19s ---- ####
 summary(lmer(reactionTime ~ participant*agent + (1 + participant*agent|workerid), subset(mss,expt=="6:Attn19s")))
@@ -753,3 +799,60 @@ summary(lmer(reactionTime ~ participant*agent + attentionTime + (1 + participant
 ciUpper = 12.09 + 1.546 * 1.96; ciUpper # print CI
 ciLower = 12.09 - 1.546 * 1.96; ciLower # print CI
 2*(1-pnorm(7.818)) # print p-value.
+
+
+# ------------------ Plot Fig6: Meta Analytic Plot ####
+
+# doing meta analytic calculations from p7 of http://www.meta-analysis.com/downloads/Meta-analysis%20fixed%20effect%20vs%20random%20effects.pdf
+
+# the data for the below DF are from all the calculations in the file above.
+metaAnalyticDF = data.frame(study = factor(c("1a", "1b", "1c", "2aHit", "2aCR", "2bHit", "2bCR",
+                                             "3", "4", "5bAttn", "7", "5a", "5bNoAttn", "6", "8a", "8b"),
+                                           levels = c("1a", "1b", "1c", "2aHit", "2aCR", "2bHit", "2bCR",
+                                                      "3", "4", "5bAttn", "7", "5a", "5bNoAttn", "6", "8a", "8b"),
+                                           labels = c("1a", "1b", "1c", "2aHit", "2aCR", "2bHit", "2bCR",
+                                                      "3", "4", "5bAttn", "7", "5a", "5bNoAttn", "6", "8a", "8b")),
+                            crossover = c(172.65, 121.81, 65.71, 169.73, 213.48, 117.09, 152.80, 171.47, 113.71,
+                                          139.12, 90.36, 21.72, 62.40, 12.012, 6.299, -31.89),
+                            SE = c(40.11, 28.6, 26.52, 38.12, 55.47, 27.35, 31.52, 28.33, 32.74,
+                                   26.69, 27.02, 35.27, 29.65, 22.78, 27.37, 17.63),
+                            N = c(54, 72, 24, 62, 62, 24, 24, 86, 57,
+                                  175, 56, 64, 175, 79, 78, 163),
+                            predicted = c("Yes", "Yes", "Yes", "Yes", "Yes", "Yes", "Yes", "Yes", "Yes",
+                                          "Yes", "Yes", "No", "No", "No", "No", "No"))
+metaAnalyticDF$ci.h = metaAnalyticDF$crossover + metaAnalyticDF$SE*1.96
+metaAnalyticDF$ci.l = metaAnalyticDF$crossover - metaAnalyticDF$SE*1.96
+metaAnalyticDF$var = (metaAnalyticDF$SE)^2 * metaAnalyticDF$N
+metaAnalyticDF$weight = 1/metaAnalyticDF$var
+
+weightedMeanForYes = (sum(metaAnalyticDF$weight*metaAnalyticDF$crossover*1*(metaAnalyticDF$predicted=="Yes")))/(sum(metaAnalyticDF$weight*1*(metaAnalyticDF$predicted=="Yes")))
+weightedMeanForNo = (sum(metaAnalyticDF$weight*metaAnalyticDF$crossover*1*(metaAnalyticDF$predicted=="No")))/(sum(metaAnalyticDF$weight*1*(metaAnalyticDF$predicted=="No")))
+metaAnalyticDF$weightedMean = weightedMeanForYes * (metaAnalyticDF$predicted=="Yes") + 
+  weightedMeanForNo * (metaAnalyticDF$predicted=="No")
+
+cbPalette <- c("#999999", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
+
+# # try flipping axes. flip order of factor labels to have 1a on top
+flipMetaAnalyticDF = metaAnalyticDF
+flipMetaAnalyticDF$study = factor(flipMetaAnalyticDF$study,
+                                  levels = c("8b", "8a", "6", "5bNoAttn", "5a", "5bAttn", "7", 
+                                             "4", "3", "2bCR", "2bHit", "2aCR", "2aHit", "1c", "1b", "1a"),
+                                  labels = c("8b", "8a", "6", "5bNoAttn", "5a", "5bAttn", "7", 
+                                             "4", "3", "2bCR", "2bHit", "2aCR", "2aHit", "1c", "1b", "1a"))
+ggplot(flipMetaAnalyticDF, aes(x=study, y=crossover, colour=predicted, group=predicted)) + 
+  ylab("Interaction coefficient (ms)") + ylim(-100,400) +
+  xlab("Study") +
+  guides(color=guide_legend(title="Predicted by\nAttention Check\nHypothesis")) +
+  geom_point(shape=1) +
+  geom_hline(aes(yintercept=0)) +
+  geom_errorbar(aes(y=weightedMean, ymin=weightedMean, ymax=weightedMean), linetype="dashed") +
+  scale_colour_manual(values=cbPalette) +
+  geom_linerange(aes(ymin=ci.l, ymax=ci.h)) +
+  coord_flip() +
+  theme(axis.text = element_text(size=12),
+        axis.title.x = element_text(size=16, vjust=0.10),
+        axis.title.y = element_text(size=16, vjust=0.35),
+        legend.text = element_text(size=12),
+        title = element_text(size=16),
+        panel.grid = element_blank())
+# # 8 by 6
