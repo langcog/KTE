@@ -20,7 +20,7 @@ s5b <- read.csv("study5b.csv") # Standard, with and without attention check, cou
 s6 <- read.csv("study6.csv") # Standard; attention check at agent re-enter (19s for all movies)
 s7 <- read.csv("study7.csv") # No agent; attention check on lightbulb instead of agent.
 s8a <- read.csv("study8a.csv") # Standard; attention check on lightbulb at various timings
-s8b <- read.csv("study8b") # Standard; attention check on lightbulb at various timings
+s8b <- read.csv("study8b.csv") # Standard; attention check on lightbulb at various timings
 
 s1a$expt <- "1a:Replication1"
 s1b$expt <- "1b:Replication2"
@@ -62,11 +62,12 @@ d$attentionTime = (16.7*(d$PArray==1 & d$AArray==1) +
   (d$expt=='attn19s')*19
 d <- rbind(d, s8a, s8b)
 
-d$expt <- factor(d$expt, levels=c("1a:Replication1", "1b:Replication2", "1c:LabReplication", 
-                                  "2a:2AFC", "2a:2AFC,CR", "2b:Lab2AFC", "2b:Lab2AFC,CR",
-                                  "3:Absent", "4:Occluder", 
-                                  "5a:NoAttn", "5b:NoAttn", "5b:Attn",
-                                  "6:Attn19s", "7:NoAgent,LB", "8a:LBtimes", "8b:LBtimes"))
+expts <- c("1a:Replication1", "1b:Replication2", "1c:LabReplication", 
+           "2a:2AFC", "2a:2AFC,CR", "2b:Lab2AFC", "2b:Lab2AFC,CR",
+           "3:Absent", "4:Occluder", 
+           "5a:NoAttn", "5b:NoAttn", "5b:Attn",
+           "6:Attn19s", "7:NoAgent,LB", "8a:LBtimes", "8b:LBtimes")
+d$expt <- factor(d$expt, levels=expts)
 d$participant <- factor(c("Absent","Present")[d$PArray+1])
 d$agent <- factor(c("Absent","Present")[d$AArray+1])
 
@@ -342,15 +343,15 @@ ms$ci.h <- aggregate(reactionTime ~  participant + agent + expt , mss, ci.high)$
 ms$ci.l <- aggregate(reactionTime ~  participant + agent + expt , mss, ci.low)$reactionTime
 ms$n <- aggregate(workerid ~  participant + agent + expt , mss, n.unique)$workerid
 
-KTE = data.frame(participant = factor(c("Absent", "Present", "Absent", "Present")),
-                 agent = factor(c("Absent", "Absent", "Present", "Present")),
-                 expt = factor(c("KTE", "KTE", "KTE", "KTE")),
-                 #attentionTime = c(16.7, 13.2, 10.8, 16.7),
-                 reactionTime = c(360, 320, 328, 313),
-                 ci.h = c(14, 10, 12, 10)*1.96,
-                 ci.l = c(14, 10, 12, 10)*1.96,
-                 n = rep(24,4))
-ms = rbind(KTE, ms) # to put KTE as the first factor
+# KTE = data.frame(participant = factor(c("Absent", "Present", "Absent", "Present")),
+#                  agent = factor(c("Absent", "Absent", "Present", "Present")),
+#                  expt = factor(c("KTE", "KTE", "KTE", "KTE")),
+#                  #attentionTime = c(16.7, 13.2, 10.8, 16.7),
+#                  reactionTime = c(360, 320, 328, 313),
+#                  ci.h = c(14, 10, 12, 10)*1.96,
+#                  ci.l = c(14, 10, 12, 10)*1.96,
+#                  n = rep(24,4))
+# ms = rbind(KTE, ms) # to put KTE as the first factor
 
 
 # ------------------ Plot Fig2: KTE + Conceptual Figure ####
@@ -358,26 +359,23 @@ ms = rbind(KTE, ms) # to put KTE as the first factor
 conceptualFigDF = data.frame(panel = factor(c(rep("KTE",4), 
                                               rep("Ball Present",4),
                                               rep("Ball Absent",4), 
-                                              rep("Occluder",4),
-                                              rep("Crossover",4)),
-                                            levels = c("KTE", "Ball Present", "Ball Absent", "Occluder", "Crossover"),
-                                            labels = c("KTE", "Ball Present", "Ball Absent", "Occluder", "Crossover")),
-                             participant = factor(rep(c("Absent","Present"),2*5)),
-                             agent = factor(rep(c("Absent", "Absent", "Present", "Present"),5)),
+                                              rep("Occluder",4)),
+                                            levels = c("KTE", "Ball Present", "Ball Absent", "Occluder"),
+                                            labels = c("KTE", "Ball Present", "Ball Absent", "Occluder")),
+                             participant = factor(rep(c("Absent","Present"),2*4)),
+                             agent = factor(rep(c("Absent", "Absent", "Present", "Present"),4)),
                              reactionTime = c( c(360,320,328,313), #KTE
                                                c(360,330,340,310), #Ball Present prediction
                                                c(310,340,330,360), #Ball Absent prediction
-                                               c(360,330,356,326), #Occluder prediction
-                                               c(360,342,330,360)), # Crossover prediction
-                             ci.h = c(c(14, 10, 12, 10)*1.96, rep(NA,16)),
-                             ci.l = c(c(14, 10, 12, 10)*1.96, rep(NA,16)),
-                             illustrationData = factor(c(rep(0,4),rep(1,16)))
+                                               c(360,330,356,326)), #Occluder prediction
+                             ci.h = c(c(14, 10, 12, 10)*1.96, rep(NA,12)),
+                             ci.l = c(c(14, 10, 12, 10)*1.96, rep(NA,12)),
+                             illustrationData = factor(c(rep(0,4),rep(1,12)))
                              )
 
 blackGreyPalette <- c("#000000", "#999999")  
 
-ggplot(conceptualFigDF, aes(x=participant, y=reactionTime, colour=agent, group=agent, 
-                            shape=illustrationData)) + 
+ggplot(conceptualFigDF, aes(x=participant, y=reactionTime, colour=agent, group=agent, shape=illustrationData)) + 
   ylab("Reaction Time (ms)") + xlab("Participant Belief") +
   guides(color=guide_legend(title="Agent Belief")) +
   geom_line(position=position_dodge(width=.1),stat="identity") +
@@ -387,7 +385,7 @@ ggplot(conceptualFigDF, aes(x=participant, y=reactionTime, colour=agent, group=a
   scale_shape_manual(values=c(20,1), guide=FALSE) +
   geom_linerange(aes(ymin=reactionTime - ci.l, ymax=reactionTime + ci.h),
                  position=position_dodge(width=.1)) +
-  facet_wrap( ~ panel, ncol=3, as.table=TRUE, drop=FALSE) +
+  facet_wrap( ~ panel, ncol=4, as.table=TRUE, drop=FALSE) +
   theme(strip.background = element_rect(fill="#FFFFFF"), 
         strip.text = element_text(size=12), 
         axis.text = element_text(size=12),
@@ -396,7 +394,7 @@ ggplot(conceptualFigDF, aes(x=participant, y=reactionTime, colour=agent, group=a
         legend.text = element_text(size=12),
         title = element_text(size=16),
         panel.grid = element_blank())
-# Saved as a pdf. 8 x 5
+# saved as pdf 8x5
 
 # did not add error bars on the KTE because error bars on the other panels don't make sense
   
@@ -430,7 +428,8 @@ ggplot(msSub, aes(x=participant, y=reactionTime, colour=agent, group=agent)) +
         axis.text = element_text(size=12),
         axis.title = element_text(size=16),
         legend.text = element_text(size=12),
-        title = element_text(size=16))
+        title = element_text(size=16),
+        panel.grid = element_blank())
 # pdf 10 by 5
 # ------------------ End Plot Fig 3
 
@@ -440,9 +439,9 @@ msSub2 <- subset(ms,expt=="5a:NoAttn"|expt=="5b:NoAttn"|expt=="5b:Attn"|
                    expt=="6:Attn19s"|expt=="7:NoAgent,LB"|expt=="8a:LBtimes"|expt=="8b:LBtimes")
 msSub2$expt <- factor(msSub2$expt)
 levels(msSub2$expt) <- c("5a: No Check", "5b: No Check", "5b: Attention Check", 
-                         "6: Check at 19s", "7: No Agent, Lightbulb", "8a: Lightbulb timing", "8b: Lightbulb timing")
+                         "6: Check at 19s", "7: No Agent, Lightbulb", "8a: Agent+Lightbulb", "8b: Agent+Lightbulb")
 msSub2$expt <- factor(msSub2$expt, c("5a: No Check", "5b: No Check", "5b: Attention Check", 
-                                     "6: Check at 19s", "7: No Agent, Lightbulb", "8a: Lightbulb timing", "8b: Lightbulb timing"))
+                                     "6: Check at 19s", "7: No Agent, Lightbulb", "8a: Agent+Lightbulb", "8b: Agent+Lightbulb"))
 
 cbPalette <- c("#999999", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
 
@@ -464,53 +463,45 @@ ggplot(msSub2, aes(x=participant, y=reactionTime, colour=agent, group=agent)) +
         axis.title.y = element_text(size=14, vjust=0.35),
         legend.text = element_text(size=12),
         title = element_text(size=18),
-        panel.grid = element_blank())
+        panel.grid = element_blank()) 
 # square: 10 by 5
 
 # ------------------ End Plot Fig 4
 
 # ------------------ Plot Fig5: Vs. Time ####
 
-
-## Keeping all of "attentionTime", "participant", "agent" as variables:
-mssAll <- aggregate(reactionTime ~ workerid + participant + agent + attentionTime + expt, subset(d, expt=="8a:LBtimes" | expt=="8b:LBtimes"),mean)
-msAll <- aggregate(reactionTime ~ participant + agent + attentionTime, mssAll,mean)
-msAll$ci.h <- aggregate(reactionTime ~ participant + agent + attentionTime, mssAll, ci.high)$reactionTime
-msAll$ci.l <- aggregate(reactionTime ~ participant + agent + attentionTime, mssAll, ci.low)$reactionTime
-msAll$n <- aggregate(workerid ~ participant + agent + attentionTime, mssAll, n.unique)$workerid
-
-msAll$condition = (msAll$participant=="Absent" & msAll$agent=="Absent")*1 +
-  (msAll$participant=="Absent" & msAll$agent=="Present")*2 +
-  (msAll$participant=="Present" & msAll$agent=="Absent")*3 +
-  (msAll$participant=="Present" & msAll$agent=="Present")*4
-msAll$condition = factor(msAll$condition, levels = c(1:4), labels = c("P-A-", "P-A+", "P+A-", "P+A+"))
-msAll$attentionTimeFactor = factor(msAll$attentionTime)
+# Edited 9/22/14 to collapse across conditions
+mssAll <- aggregate(reactionTime ~ workerid + attentionTime + expt, subset(d, expt=="8a:LBtimes" | expt=="8b:LBtimes"),mean)
+msAll <- aggregate(reactionTime ~ attentionTime + expt, mssAll,mean)
+msAll$ci.h <- aggregate(reactionTime ~ attentionTime + expt, mssAll, ci.high)$reactionTime
+msAll$ci.l <- aggregate(reactionTime ~ attentionTime + expt, mssAll, ci.low)$reactionTime
+msAll$n <- aggregate(workerid ~ attentionTime + expt, mssAll, n.unique)$workerid
 
 msAll$expt = factor(msAll$expt)
-levels(msAll$expt) <- c("8a: Lightbulb timing", "8b: Lightbulb timing")
-msAll$expt <- factor(msAll$expt, c("8a: Lightbulb timing", "8b: Lightbulb timing"))
+levels(msAll$expt) <- c("Study 8a", "Study 8b")
+msAll$expt <- factor(msAll$expt, c("Study 8a", "Study 8b"))
 
-## Fig 5, MCF 12/12/13
+cbbwPal <- c("#d8b365","#5ab4ac")
 ggplot(aes(x=attentionTime,y=reactionTime,
            ymin=reactionTime-ci.l,ymax=reactionTime+ci.h,
-           colour=condition,group=condition),
+           colour=expt,group=expt),
        data=msAll) +
-  geom_line() + 
-  geom_pointrange(position=position_dodge(width=.2)) + 
-  scale_colour_manual(values=cbPalette) + 
-  guides(color=guide_legend(title="Video Condition")) +
-  ggtitle("Study 8a and 8b: Lightbulb timing") +
+  geom_line() + geom_pointrange() +
+  scale_colour_manual(values=cbbwPal) + 
+  guides(color=guide_legend(title="Experiment")) +
+  scale_x_continuous(breaks=c(10.9, 12.9, 14.9, 16.9, 18.9)) +
+  #ggtitle("Dissociation of attention check time from video condition") +
   ylab("Reaction Time (ms)") + 
-  xlab("Attention Check Time (s)") + ylim(500,900) +
-  facet_wrap( ~ expt, nrow=1) + theme(strip.background = element_rect(fill="#FFFFFF"), 
-                                      strip.text = element_text(size=14), 
-                                      axis.text = element_text(size=14),
-                                      axis.title.x = element_text(size=16, vjust=-0.2),
-                                      axis.title.y = element_text(size=16, vjust=0.35),
-                                      legend.text = element_text(size=14),
-                                      title = element_text(size=18, vjust=1),
-                                      panel.grid = element_blank())
-# Save as 10 by 5 pdf
+  xlab("Attention Check Time (s)") + ylim(550,800) +
+  theme(strip.background = element_rect(fill="#FFFFFF"), 
+        strip.text = element_text(size=14), 
+        axis.text = element_text(size=14),
+        axis.title.x = element_text(size=16, vjust=-0.2),
+        axis.title.y = element_text(size=16, vjust=0.35),
+        legend.text = element_text(size=14),
+        title = element_text(size=18, vjust=1),
+        panel.grid = element_blank())
+# 10 by 5 pdf
 
 # ------------------ End Plot Fig 5
 
@@ -803,56 +794,215 @@ ciLower = 12.09 - 1.546 * 1.96; ciLower # print CI
 
 # ------------------ Plot Fig6: Meta Analytic Plot ####
 
+
+myCalculateRTCI <- function (comparison1, comparison2) {
+  c1aggregate <- aggregate(reactionTime ~ workerid + participant + agent, comparison1, mean)
+  c1aggregate = c1aggregate[order(c1aggregate$workerid),]
+  c2aggregate <- aggregate(reactionTime ~ workerid + participant + agent, comparison2, mean)
+  c2aggregate = c2aggregate[order(c2aggregate$workerid),]
+  
+  means <- c1aggregate$reactionTime - c2aggregate$reactionTime  
+  cis <- list()
+  cis$M <- mean(means)
+  cis$N <- length(means)
+  cis$SE <- sd(means) / sqrt(cis$N)
+  
+  return(cis)
+}
+
+
+blackGreyPal <- c("#000000", "#999999")
+cbPal <- c("#999999", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
+cbbwPal <- c("#d8b365","#5ab4ac")
+
 # doing meta analytic calculations from p7 of http://www.meta-analysis.com/downloads/Meta-analysis%20fixed%20effect%20vs%20random%20effects.pdf
+# updated: http://onlinelibrary.wiley.com/store/10.1002/jrsm.12/asset/12_ftp.pdf?v=1&t=hz05ch4u&s=1e2069ee724b3aad1941cbbd8e713de1bf4312d8
+# Borenstein, M., Hedges, L. V., Higgins, J., & Rothstein, H. R. (2010). A basic introduction to fixed‐effect and random‐effects models for meta‐analysis. Research Synthesis Methods, 1(2), 97-111
 
-# the data for the below DF are from all the calculations in the file above.
-metaAnalyticDF = data.frame(study = factor(c("1a", "1b", "1c", "2aHit", "2aCR", "2bHit", "2bCR",
-                                             "3", "4", "5bAttn", "7", "5a", "5bNoAttn", "6", "8a", "8b"),
-                                           levels = c("1a", "1b", "1c", "2aHit", "2aCR", "2bHit", "2bCR",
-                                                      "3", "4", "5bAttn", "7", "5a", "5bNoAttn", "6", "8a", "8b"),
-                                           labels = c("1a", "1b", "1c", "2aHit", "2aCR", "2bHit", "2bCR",
-                                                      "3", "4", "5bAttn", "7", "5a", "5bNoAttn", "6", "8a", "8b")),
-                            crossover = c(172.65, 121.81, 65.71, 169.73, 213.48, 117.09, 152.80, 171.47, 113.71,
-                                          139.12, 90.36, 21.72, 62.40, 12.012, 6.299, -31.89),
-                            SE = c(40.11, 28.6, 26.52, 38.12, 55.47, 27.35, 31.52, 28.33, 32.74,
-                                   26.69, 27.02, 35.27, 29.65, 22.78, 27.37, 17.63),
-                            N = c(54, 72, 24, 62, 62, 24, 24, 86, 57,
-                                  175, 56, 64, 175, 79, 78, 163),
-                            predicted = c("Yes", "Yes", "Yes", "Yes", "Yes", "Yes", "Yes", "Yes", "Yes",
-                                          "Yes", "Yes", "No", "No", "No", "No", "No"))
-metaAnalyticDF$ci.h = metaAnalyticDF$crossover + metaAnalyticDF$SE*1.96
-metaAnalyticDF$ci.l = metaAnalyticDF$crossover - metaAnalyticDF$SE*1.96
-metaAnalyticDF$var = (metaAnalyticDF$SE)^2 * metaAnalyticDF$N
-metaAnalyticDF$weight = 1/metaAnalyticDF$var
+ordered.expts <- c("1a",   "1b", "1c",  "2aHit", "2aCR", "2bHit", "2bCR", "3",   "4",  "5a", "5bNoAttn", "5bAttn", "6",  "7", "8a", "8b")
+predicted     <- c("Yes", "Yes", "Yes",  "Yes",  "Yes",  "Yes",   "Yes",  "Yes", "Yes", "No",     "No",    "Yes",  "No", "Yes", "No", "No")
 
-weightedMeanForYes = (sum(metaAnalyticDF$weight*metaAnalyticDF$crossover*1*(metaAnalyticDF$predicted=="Yes")))/(sum(metaAnalyticDF$weight*1*(metaAnalyticDF$predicted=="Yes")))
-weightedMeanForNo = (sum(metaAnalyticDF$weight*metaAnalyticDF$crossover*1*(metaAnalyticDF$predicted=="No")))/(sum(metaAnalyticDF$weight*1*(metaAnalyticDF$predicted=="No")))
-metaAnalyticDF$weightedMean = weightedMeanForYes * (metaAnalyticDF$predicted=="Yes") + 
-  weightedMeanForNo * (metaAnalyticDF$predicted=="No")
+maAC <- data.frame()
+for (i in 1:length(expts)) {
+  thisLmer = lmer(reactionTime ~ participant*agent + (1 + participant*agent|workerid), subset(d, expt==expts[i]))
+  maAC <- rbind.fill(maAC,
+                     data.frame(study=ordered.expts[i],
+                                predicted=predicted[i],
+                                es= fixef(thisLmer)[4],
+                                SE= sqrt(diag(vcov(thisLmer)))[4],
+                                N = n.unique(subset(d, expt==expts[i])$workerid)))
+}
 
-cbPalette <- c("#999999", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
+maAC$ci.h = maAC$es + maAC$SE*1.96
+maAC$ci.l = maAC$es - maAC$SE*1.96
 
-# # try flipping axes. flip order of factor labels to have 1a on top
-flipMetaAnalyticDF = metaAnalyticDF
-flipMetaAnalyticDF$study = factor(flipMetaAnalyticDF$study,
-                                  levels = c("8b", "8a", "6", "5bNoAttn", "5a", "5bAttn", "7", 
-                                             "4", "3", "2bCR", "2bHit", "2aCR", "2aHit", "1c", "1b", "1a"),
-                                  labels = c("8b", "8a", "6", "5bNoAttn", "5a", "5bAttn", "7", 
-                                             "4", "3", "2bCR", "2bHit", "2aCR", "2aHit", "1c", "1b", "1a"))
-ggplot(flipMetaAnalyticDF, aes(x=study, y=crossover, colour=predicted, group=predicted)) + 
-  ylab("Interaction coefficient (ms)") + ylim(-100,400) +
-  xlab("Study") +
-  guides(color=guide_legend(title="Predicted by\nAttention Check\nHypothesis")) +
-  geom_point(shape=1) +
-  geom_hline(aes(yintercept=0)) +
-  geom_errorbar(aes(y=weightedMean, ymin=weightedMean, ymax=weightedMean), linetype="dashed") +
-  scale_colour_manual(values=cbPalette) +
-  geom_linerange(aes(ymin=ci.l, ymax=ci.h)) +
-  coord_flip() +
-  theme(axis.text = element_text(size=12),
-        axis.title.x = element_text(size=16, vjust=0.10),
-        axis.title.y = element_text(size=16, vjust=0.35),
-        legend.text = element_text(size=12),
-        title = element_text(size=16),
-        panel.grid = element_blank())
-# # 8 by 6
+maAC$withinStudyVar = (maAC$SE)^2
+maAC$withinStudyWeight = 1/maAC$withinStudyVar
+
+maAC_Q_for_yes = with(subset(maAC, maAC$predicted=="Yes"), sum(withinStudyWeight*es*es) - ((sum(withinStudyWeight*es))^2)/sum(withinStudyWeight))
+maAC_C_for_yes = with(subset(maAC, maAC$predicted=="Yes"), sum(withinStudyWeight) - sum(withinStudyWeight^2)/sum(withinStudyWeight))
+maAC_tauSquared_for_yes = max((maAC_Q_for_yes-(sum(predicted=="Yes")-1))/maAC_C_for_yes,0)
+maAC_Q_for_no = with(subset(maAC, maAC$predicted=="No"), sum(withinStudyWeight*es*es) - ((sum(withinStudyWeight*es))^2)/sum(withinStudyWeight))
+maAC_C_for_no = with(subset(maAC, maAC$predicted=="No"), sum(withinStudyWeight) - sum(withinStudyWeight^2)/sum(withinStudyWeight))
+maAC_tauSquared_for_no = max((maAC_Q_for_no-(sum(predicted=="No")-1))/maAC_C_for_no,0)
+
+maAC$tauSquared = maAC_tauSquared_for_yes * (maAC$predicted=="Yes") + maAC_tauSquared_for_no * (maAC$predicted=="No")
+maAC$var = (maAC$withinStudyVar + maAC$tauSquared)
+maAC$weight = 1/maAC$var # Eqn (5)
+
+# meta analytic weighted means
+maACsummary = data.frame(weightedMeanForYes = (sum(maAC$weight*maAC$es*1*(maAC$predicted=="Yes")))/
+                           (sum(maAC$weight*1*(maAC$predicted=="Yes"))),
+                         weightedMeanForNo = (sum(maAC$weight*maAC$es*1*(maAC$predicted=="No")))/
+                           (sum(maAC$weight*1*(maAC$predicted=="No"))),
+                         varForYes = 1/(sum(maAC$weight*1*(maAC$predicted=="Yes"))),
+                         varForNo = 1/(sum(maAC$weight*1*(maAC$predicted=="No")))
+)
+maACsummary$ciForYes = sqrt(maACsummary$varForYes) * 1.96
+maACsummary$ciForNo = sqrt(maACsummary$varForNo) * 1.96
+
+maAC <- rbind(maAC,
+              data.frame(study=c("","Positive Predictions","Null Predictions"),
+                         predicted=c("No","Yes","No"),
+                         es=c(NA,maACsummary$weightedMeanForYes, maACsummary$weightedMeanForNo),
+                         SE=c(NA,sqrt(maACsummary$varForYes),sqrt(maACsummary$varForNo)),
+                         N=c(NA,NA,NA),
+                         ci.l=c(NA, maACsummary$weightedMeanForYes - maACsummary$ciForYes,
+                                maACsummary$weightedMeanForNo - maACsummary$ciForNo),
+                         ci.h=c(NA, maACsummary$weightedMeanForYes + maACsummary$ciForYes,
+                                maACsummary$weightedMeanForNo + maACsummary$ciForNo),
+                         withinStudyVar=c(NA,NA,NA),
+                         withinStudyWeight=c(NA,NA,NA),
+                         tauSquared=c(NA,NA,NA),
+                         var=c(NA,maACsummary$varForYes,maACsummary$varForNo),
+                         weight=c(NA,NA,NA))
+)                        
+
+#### --- constructing meta analytic figure for the P-A- vs. P-A+ comparison ---- ####
+
+study <-     c("1a",  "1b",  "1c",  "2aHit", "2aCR", "2bHit", "2bCR", "3",  "4",  "5a",  "5bNoAttn", "5bAttn", "6",    "7", "8a",  "8b")
+predicted <- c("Yes", "Yes", "Yes", "Yes",   "No",   "Yes",   "No",   "No", "No", "Yes",  "Yes",     "Yes",    "Yes", "No", "Yes", "Yes")
+
+maABE <- data.frame()
+for (i in 1:length(expts)) {
+  es <- myCalculateRTCI(subset(d, d$expt==expts[i] & d$participant=="Absent" & d$agent=="Absent"),
+                        subset(d, d$expt==expts[i] & d$participant=="Absent" & d$agent=="Present"))
+  maABE <- rbind.fill(maABE,
+                      data.frame(study=study[i],
+                                 predicted=predicted[i],
+                                 es=es$M,
+                                 SE=es$SE,
+                                 N = es$N))
+}
+maABE$ci.h = maABE$es + maABE$SE*1.96
+maABE$ci.l = maABE$es - maABE$SE*1.96
+
+#maABE$var = (maABE$SE)^2 *maABE$N
+#maABE$weight = 1/maABE$var
+
+maABE$withinStudyVar = (maABE$SE)^2
+maABE$withinStudyWeight = 1/maABE$withinStudyVar
+
+maABE_Q_for_yes = with(subset(maABE, maABE$predicted=="Yes"), sum(withinStudyWeight*es*es) - ((sum(withinStudyWeight*es))^2)/sum(withinStudyWeight))
+maABE_C_for_yes = with(subset(maABE, maABE$predicted=="Yes"), sum(withinStudyWeight) - sum(withinStudyWeight^2)/sum(withinStudyWeight))
+maABE_tauSquared_for_yes = max((maABE_Q_for_yes-(sum(predicted=="Yes")-1))/maABE_C_for_yes,0)
+maABE_Q_for_no = with(subset(maABE, maABE$predicted=="No"), sum(withinStudyWeight*es*es) - ((sum(withinStudyWeight*es))^2)/sum(withinStudyWeight))
+maABE_C_for_no = with(subset(maABE, maABE$predicted=="No"), sum(withinStudyWeight) - sum(withinStudyWeight^2)/sum(withinStudyWeight))
+maABE_tauSquared_for_no = max((maABE_Q_for_no-(sum(predicted=="No")-1))/maABE_C_for_no,0)
+
+maABE$tauSquared = maABE_tauSquared_for_yes * (maABE$predicted=="Yes") + maABE_tauSquared_for_no * (maABE$predicted=="No")
+maABE$var = (maABE$withinStudyVar + maABE$tauSquared)
+maABE$weight = 1/maABE$var # Eqn (5)
+
+maABEsummary = data.frame(weightedMeanForYes = (sum(maABE$weight*maABE$es*1*(maABE$predicted=="Yes")))/
+                            (sum(maABE$weight*1*(maABE$predicted=="Yes"))),
+                          varForYes = 1/(sum(maABE$weight*1*(maABE$predicted=="Yes"))),
+                          weightedMeanForNo = (sum(maABE$weight*maABE$es*1*(maABE$predicted=="No")))/
+                            (sum(maABE$weight*1*(maABE$predicted=="No"))),
+                          varForNo = 1/(sum(maABE$weight*1*(maABE$predicted=="No")))
+)
+
+maABEsummary$ciForYes = sqrt(maABEsummary$varForYes) * 1.96
+maABEsummary$ciForNo = sqrt(maABEsummary$varForNo) * 1.96
+
+maABE <- rbind(maABE,
+               data.frame(study=c("","Positive Predictions","Null Predictions"),
+                          es=c(NA,maABEsummary$weightedMeanForYes, maABEsummary$weightedMeanForNo),
+                          SE=c(NA,sqrt(maABEsummary$varForYes),sqrt(maABEsummary$varForNo)),
+                          N=c(NA,NA,NA),
+                          predicted=c("No","Yes","No"),
+                          ci.l=c(NA,maABEsummary$weightedMeanForYes - maABEsummary$ciForYes,
+                                 maABEsummary$weightedMeanForNo - maABEsummary$ciForNo),
+                          ci.h=c(NA,maABEsummary$weightedMeanForYes + maABEsummary$ciForYes,
+                                 maABEsummary$weightedMeanForNo + maABEsummary$ciForNo),
+                          withinStudyVar=c(NA,NA,NA),
+                          withinStudyWeight=c(NA,NA,NA),
+                          tauSquared=c(NA,NA,NA),
+                          var=c(NA,maABEsummary$varForYes,maABEsummary$varForNo),
+                          weight=c(NA,NA,NA)))                        
+
+
+#### now try the combined plot
+
+maAC$hypothesis <- "Attention Check Hypothesis\n(Crossover Interaction)"
+maABE$hypothesis <- "Automatic ToM Hypothesis\n(P-A+ > P-A-)"
+ma <- rbind.fill(maAC,maABE)
+
+ma$study <- factor(ma$study, 
+                   levels=c("Positive Predictions","Null Predictions","","8b", "8a", "7", "6", "5bNoAttn", "5bAttn", "5a",
+                            "4", "3", "2bCR", "2bHit", "2aCR", "2aHit", "1c", 
+                            "1b", "1a"))
+ma$predicted = factor(ma$predicted, levels = c("Yes", "No"),
+                      labels = c("Hypothesis predicts\npositive effect\n","Hypothesis predicts\nnull effect\n"))
+
+ma$marker_size = factor(3 + 1*(ma$study=="Positive Predictions") + 1*(ma$study=="Null Predictions"))
+
+ma$study = factor(ma$study, levels = c("Positive Predictions", "Null Predictions", "", "8b", "8a", "6", "5bNoAttn", "5a",
+                                       "7", "5bAttn", "4", "3", "2bCR", "2bHit", "2aCR", "2aHit", "1c", "1b", "1a"))
+p1 <- ggplot(subset(ma, hypothesis=="Attention Check Hypothesis\n(Crossover Interaction)"), 
+             aes(x=study, y=es, ymin=ci.l, ymax=ci.h,colour=predicted, group=predicted, shape=predicted)) + 
+  geom_hline(yintercept=0,lty=3) +
+  geom_point(aes(size = marker_size)) +
+  scale_size_manual(name = "", values=c(3,5), guide=FALSE) +
+  geom_linerange() + 
+  ylim(-150,301) +
+  geom_vline(xintercept=3,lty=2) +
+  facet_grid(.~hypothesis, scales="free") + 
+  xlab("Study") + 
+  ylab("Reaction Time for Key Effect (ms)") +
+  scale_colour_manual(name="", values=cbbwPal) +
+  scale_shape_discrete(name="") +
+  coord_flip() + theme(strip.background = element_rect(fill="#FFFFFF"), 
+                       strip.text = element_text(size=14),
+                       axis.text = element_text(size=14),
+                       axis.title.x = element_text(size=16, vjust=-0.2),
+                       axis.title.y = element_text(size=16, vjust=0.35),
+                       legend.text = element_text(size=12),
+                       panel.grid = element_blank(),
+                       legend.position="left")
+
+
+ma$study = factor(ma$study, levels = c("Positive Predictions", "Null Predictions", "", "7", "4", "3", "2bCR", "2aCR", 
+                                       "8b", "8a", "6", "5bNoAttn", "5bAttn", "5a", "2bHit", "2aHit", "1c", "1b", "1a"))
+p2 <- ggplot(subset(ma, hypothesis=="Automatic ToM Hypothesis\n(P-A+ > P-A-)"), 
+             aes(x=study, y=es, ymin=ci.l, ymax=ci.h, colour=predicted, group=predicted, shape=predicted)) + 
+  geom_hline(yintercept=0,lty=3) +
+  geom_point(aes(size = marker_size)) +
+  scale_size_manual(name = "", values=c(3,5), guide=FALSE) +
+  geom_linerange() + 
+  ylim(-150,301) +
+  geom_vline(xintercept=3,lty=2) +
+  facet_grid(.~hypothesis, scales="free") + 
+  xlab("Study") + 
+  ylab("Reaction Time for Key Effect (ms)") +
+  scale_colour_manual(name="", values=cbbwPal) +
+  scale_shape_discrete(name="") +
+  coord_flip() + theme(strip.background = element_rect(fill="#FFFFFF"), 
+                       strip.text = element_text(size=14),
+                       axis.text = element_text(size=14),
+                       axis.title.x = element_text(size=16, vjust=-0.2),
+                       axis.title.y = element_text(size=16, vjust=0.35),
+                       legend.text = element_text(size=12),
+                       panel.grid = element_blank())
+
+multiplot(p1, p2, cols=2) #15 by 7
