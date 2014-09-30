@@ -357,11 +357,11 @@ ms$n <- aggregate(workerid ~  participant + agent + expt , mss, n.unique)$worker
 # ------------------ Plot Fig2: KTE + Conceptual Figure ####
 
 conceptualFigDF = data.frame(panel = factor(c(rep("KTE",4), 
-                                              rep("Ball Present",4),
-                                              rep("Ball Absent",4), 
+                                              rep("Response: Ball Present",4),
+                                              rep("Response: Ball Absent",4), 
                                               rep("Occluder",4)),
-                                            levels = c("KTE", "Ball Present", "Ball Absent", "Occluder"),
-                                            labels = c("KTE", "Ball Present", "Ball Absent", "Occluder")),
+                                            levels = c("KTE", "Response: Ball Present", "Response: Ball Absent", "Occluder"),
+                                            labels = c("KTE", "Response: Ball Present", "Response: Ball Absent", "Occluder")),
                              participant = factor(rep(c("Absent","Present"),2*4)),
                              agent = factor(rep(c("Absent", "Absent", "Present", "Present"),4)),
                              reactionTime = c( c(360,320,328,313), #KTE
@@ -394,7 +394,7 @@ ggplot(conceptualFigDF, aes(x=participant, y=reactionTime, colour=agent, group=a
         legend.text = element_text(size=12),
         title = element_text(size=16),
         panel.grid = element_blank())
-# saved as pdf 8x5
+# saved as pdf 10x3
 
 # did not add error bars on the KTE because error bars on the other panels don't make sense
   
