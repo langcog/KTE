@@ -484,11 +484,12 @@ msAll$expt <- factor(msAll$expt, c("Study 8a", "Study 8b"))
 cbbwPal <- c("#d8b365","#5ab4ac")
 ggplot(aes(x=attentionTime,y=reactionTime,
            ymin=reactionTime-ci.l,ymax=reactionTime+ci.h,
-           colour=expt,group=expt),
+           colour=expt,linetype=expt, group=expt),
        data=msAll) +
   geom_line() + geom_pointrange() +
   scale_colour_manual(values=cbbwPal) + 
-  guides(color=guide_legend(title="Experiment")) +
+  guides(color=guide_legend(title="Experiment"),
+         linetype=guide_legend(title="Experiment")) +
   scale_x_continuous(breaks=c(10.9, 12.9, 14.9, 16.9, 18.9)) +
   #ggtitle("Dissociation of attention check time from video condition") +
   ylab("Reaction Time (ms)") + 
@@ -501,7 +502,7 @@ ggplot(aes(x=attentionTime,y=reactionTime,
         legend.text = element_text(size=14),
         title = element_text(size=18, vjust=1),
         panel.grid = element_blank())
-# 10 by 5 pdf
+# 7 by 5 pdf
 
 # ------------------ End Plot Fig 5
 
