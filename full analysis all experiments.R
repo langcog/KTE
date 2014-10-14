@@ -400,9 +400,6 @@ ggplot(conceptualFigDF, aes(x=participant, y=reactionTime, colour=agent, group=a
   
 
 # ------------------ Plot Fig3: Studies 1-4 -- 9 panels in 3 rows ####
-# with 2 rows:
-#1a, 1b, 1c, 2a Hit, 2b Hit
-#2a CR, 2b CR, Absent, <BLANK>, 4:Occluder
 msSub <- subset(ms,expt=="1a:Replication1"|expt=="1b:Replication2"|expt=="1c:LabReplication"|
                   expt=="2a:2AFC"|expt=="2a:2AFC,CR"|expt=="2b:Lab2AFC"|expt=="2b:Lab2AFC,CR" | expt=="3:Absent" |
                   expt=="4:Occluder")
@@ -555,6 +552,9 @@ myCalculateCohensD(comparison1, comparison2)
 myCalculateTTest(comparison1, comparison2)
 
 #### ---- Study 5b: With and without Attention check ---- ####
+
+#3 way interaction
+summary(lmer(reactionTime ~ participant*agent*expt + (1 + participant*agent|workerid), subset(d, expt=="5b:Attn" | expt == "5b:NoAttn")))
 
 # no attention check
 summary(lmer(reactionTime ~ participant*agent + (1 + participant*agent|workerid), subset(d, expt=="5b:NoAttn")))
@@ -736,10 +736,10 @@ myCalculateTTest(comparison1, comparison2)
 
 
 # for Study 8a, using attentioncheck as a predictor
-summary(lmer(reactionTime ~ participant*agent + attentionTime + (1 + participant*agent|workerid), mssAll))
-ciUpper = 9.512 + 2.101 * 1.96; ciUpper # print CI
-ciLower = 9.512 - 2.101 * 1.96; ciLower # print CI
-2*(1-pnorm(4.528)) # print p-value.
+summary(lmer(reactionTime ~ participant*agent + attentionTime + (1 + participant*agent|workerid), subset(d, expt=="8a:LBtimes")))
+ciUpper = 9.693 + 2.156 * 1.96; ciUpper # print CI
+ciLower = 9.693 - 2.156 * 1.96; ciLower # print CI
+2*(1-pnorm(4.496)) # print p-value.
 
 
 
@@ -787,9 +787,9 @@ myCalculateCohensD(comparison1, comparison2) # .06
 myCalculateTTest(comparison1, comparison2) # .442
 
 # for Study 8b, using attentioncheck as a predictor
-summary(lmer(reactionTime ~ participant*agent + attentionTime + (1 + participant*agent|workerid), subset(mssAll, expt=="8b:LBtimes")))
-ciUpper = 12.09 + 1.546 * 1.96; ciUpper # print CI
-ciLower = 12.09 - 1.546 * 1.96; ciLower # print CI
+summary(lmer(reactionTime ~ participant*agent + attentionTime + (1 + participant*agent|workerid), subset(d, expt=="8b:LBtimes")))
+ciUpper = 12.086 + 1.546 * 1.96; ciUpper # print CI
+ciLower = 12.086 - 1.546 * 1.96; ciLower # print CI
 2*(1-pnorm(7.818)) # print p-value.
 
 
