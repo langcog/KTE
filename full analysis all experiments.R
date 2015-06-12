@@ -1,6 +1,72 @@
 rm(list=ls())
 source("mcf.useful.R")
 
+### --- Just for KTE study 0 (replication with KTE's original stimuli) --- ###
+s0 <- read.csv("study0.csv") # replication with KTE's original stimuli
+s0$participant <- factor(c("Absent","Present")[s0$PArray+1])
+s0$agent <- factor(c("Absent","Present")[s0$AArray+1])
+
+#---- P-A- - P+A+ ----#
+comparison1 = subset(s0, s0$participant=="Absent" & s0$agent=="Absent")
+comparison2 = subset(s0, s0$participant=="Present" & s0$agent=="Present")
+myCalculateCohensD(comparison1, comparison2)   # d = -0.162
+myCalculateTTest(comparison1, comparison2)   # p = 0.192
+
+#---- P-A- - P+A- ----#
+comparison1 = subset(s0, s0$participant=="Absent" & s0$agent=="Absent")
+comparison2 = subset(s0, s0$participant=="Present" & s0$agent=="Absent")
+myCalculateCohensD(comparison1, comparison2) # d = 0.426
+myCalculateTTest(comparison1, comparison2) # p < 0.001 ***
+
+#---- P-A- - P-A+ ---- #
+comparison1 = subset(s0, s0$participant=="Absent" & s0$agent=="Absent")
+comparison2 = subset(s0, s0$participant=="Absent" & s0$agent=="Present")
+myCalculateCohensD(comparison1, comparison2) # d = 0.138
+myCalculateTTest(comparison1, comparison2) # p = 0.2665
+
+#---- P-A+ - P+A- ---- #
+comparison1 = subset(s0, s0$participant=="Absent" & s0$agent=="Present")
+comparison2 = subset(s0, s0$participant=="Present" & s0$agent=="Absent")
+myCalculateCohensD(comparison1, comparison2) # d = 0.237
+myCalculateTTest(comparison1, comparison2) # p = 0.06
+
+mss <- aggregate(reactionTime ~ workerid + participant + agent, s0,mean)
+
+# lmer for Study 0
+# doesn't converge...
+#summary(lmer(reactionTime ~ participant*agent + (1 + participant*agent|workerid), mss))
+summary(lmer(reactionTime ~ participant*agent + (1|workerid), mss))
+ciUpper = 121.85 + 31.50 * 1.96; ciUpper # print CI
+ciLower = 121.85 - 31.50 * 1.96; ciLower # print CI
+2*(1-pnorm(3.868)) # print p-value.
+
+mss <- aggregate(reactionTime ~ workerid + participant + agent , s0,mean)
+ms <- aggregate(reactionTime ~  participant + agent , mss,mean)
+ms$ci.h <- aggregate(reactionTime ~  participant + agent, mss, ci.high)$reactionTime
+ms$ci.l <- aggregate(reactionTime ~  participant + agent , mss, ci.low)$reactionTime
+ms$n <- aggregate(workerid ~  participant + agent , mss, n.unique)$workerid
+
+blackGreyPalette <- c("#000000", "#999999")  
+ggplot(ms, aes(x=participant, y=reactionTime, colour=agent, group=agent)) + 
+  ylab("Reaction Time (ms)") + ylim(390,1100) +
+  xlab("Participant Belief") +
+  guides(color=guide_legend(title="Agent Belief")) +
+  geom_line(position=position_dodge(width=.1),stat="identity") +
+  scale_colour_manual(values=blackGreyPalette) +
+  geom_linerange(aes(ymin=reactionTime - ci.l, ymax=reactionTime + ci.h),
+                 position=position_dodge(width=.1)) +
+  theme(strip.background = element_rect(fill="#FFFFFF"), 
+        strip.text = element_text(size=12), 
+        axis.text = element_text(size=12),
+        axis.title = element_text(size=16),
+        legend.text = element_text(size=12),
+        title = element_text(size=16),
+        panel.grid = element_blank())
+
+### --- End KTE study 0 (replication with KTE's original stimuli) --- ###
+
+
+
 #### --- Preprocessing --- ####
 ### full analysis
 s1a <- read.csv("study1a.csv") #direct replication 1
