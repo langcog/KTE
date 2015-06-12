@@ -25,16 +25,16 @@ All the experiments used in all the online studies are also included in the repo
 It takes approximately 20-25 minutes to finish each experiment. If you do finish it, you'll also see a mockup of the data that would've been collected, had this been running live.
 The complete experiments can be loaded using the following links: 
 
-Study1a/1b: http://rawgit.com/langcog/KTE/master/KTE_Study1a/index.html
-Study2a: http://rawgit.com/langcog/KTE/master/KTE_Study2a/index.html
-Study3: http://rawgit.com/langcog/KTE/master/KTE_Study3/index.html
-Study4: http://rawgit.com/langcog/KTE/master/KTE_Study4/index.html
-Study5a: http://rawgit.com/langcog/KTE/master/KTE_Study5a/index.html
-Study5b: http://rawgit.com/langcog/KTE/master/KTE_Study5b/index.html
-Study6: http://rawgit.com/langcog/KTE/master/KTE_Study6/index.html
-Study7: http://rawgit.com/langcog/KTE/master/KTE_Study7/index.html
-Study8a: http://rawgit.com/langcog/KTE/master/KTE_Study8a/index.html
-Study8b: http://rawgit.com/langcog/KTE/master/KTE_Study8b/index.html
++ Study1a/1b: http://rawgit.com/langcog/KTE/master/KTE_Study1a/index.html
++ Study2a: http://rawgit.com/langcog/KTE/master/KTE_Study2a/index.html
++ Study3: http://rawgit.com/langcog/KTE/master/KTE_Study3/index.html
++ Study4: http://rawgit.com/langcog/KTE/master/KTE_Study4/index.html
++ Study5a: http://rawgit.com/langcog/KTE/master/KTE_Study5a/index.html
++ Study5b: http://rawgit.com/langcog/KTE/master/KTE_Study5b/index.html
++ Study6: http://rawgit.com/langcog/KTE/master/KTE_Study6/index.html
++ Study7: http://rawgit.com/langcog/KTE/master/KTE_Study7/index.html
++ Study8a: http://rawgit.com/langcog/KTE/master/KTE_Study8a/index.html
++ Study8b: http://rawgit.com/langcog/KTE/master/KTE_Study8b/index.html
 
 The videos used in the experiments can be found in the relevant experiment folders, under videos (e.g. KTE_StudyX/videos). 
 We have included the videos used in the lab experiment (Studies 1c/2b), in the folder "Lab Stimuli".
