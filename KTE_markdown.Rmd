@@ -17,6 +17,7 @@ source("mcf.useful.R")
 cbPalette <- c("#999999", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
 blackGreyPalette <- c("#000000", "#999999")
 cbbwPal <- c("#d8b365","#5ab4ac")
+cbbwPal2 <- c("orange","steelblue3") # changed color scheme slightly after copyediting
 
 #### --- Preprocessing --- ####
 s1a <- read.csv("study1a.csv") #direct replication 1
@@ -123,7 +124,7 @@ conceptualFigDF = data.frame(panel = factor(c(rep("KTE",4),
                                               rep("Response: Ball Absent",4), 
                                               rep("Occluder",4)),
                                             levels = c("KTE", "Response: Ball Present", "Response: Ball Absent", "Occluder"),
-                                            labels = c("KTE", "Response: Ball Present", "Response: Ball Absent", "Occluder")),
+                                            labels = c("a) KTE", "b) Response: Ball Present", "c) Response: Ball Absent", "d) Occluder")), # added letter labels after copyediting
                              participant = factor(rep(c("Absent","Present"),2*4)),
                              agent = factor(rep(c("Absent", "Absent", "Present", "Present"),4)),
                              reactionTime = c( c(360,320,328,313), #KTE
@@ -156,6 +157,7 @@ ggplot(conceptualFigDF, aes(x=participant, y=reactionTime, colour=agent, group=a
         title = element_text(size=16),
         panel.grid = element_blank())
 # saved as pdf 10x3
+# 11x3 after adding letter labels
 ```
 
 Figure 2: Left-most panel: data from KTE’s Experiment 1, estimated from KTE’s Fig. 2A. For purpose of comparison to other figures, error bars show 95% confidence intervals, rather than the standard error of the mean provided in the original. The next three panels show the pattern of reaction times that are predicted by Automatic ToM, for responding to “ball present” (second panel; identical to KTE’s paradigm), responding to “ball absent” (third panel; tested with our Studies 2–3), and responding to ball present in “occluder” trials, where there is an occluder between the agent and the ball at all times (fourth panel; tested with our Study 4).
@@ -718,7 +720,7 @@ ggplot(aes(x=attentionTime,y=reactionTime,
            colour=expt,linetype=expt, group=expt),
        data=msAll) +
   geom_line() + geom_pointrange() +
-  scale_colour_manual(values=cbbwPal) + 
+  scale_colour_manual(values=cbbwPal2) + 
   guides(color=guide_legend(title="Experiment"),
          linetype=guide_legend(title="Experiment")) +
   scale_x_continuous(breaks=c(10.9, 12.9, 14.9, 16.9, 18.9)) +
@@ -890,7 +892,7 @@ maABE <- rbind(maABE,
 #### now try the combined plot
 
 maAC$hypothesis <- "Attention Check Hypothesis\n(Crossover Interaction)"
-maABE$hypothesis <- "Automatic ToM Hypothesis\n(P-A+ > P-A-)"
+maABE$hypothesis <- "Automatic ToM Hypothesis\n(P-A+ < P-A-)"
 ma <- rbind.fill(maAC,maABE)
 
 ma$study <- factor(ma$study, 
@@ -910,7 +912,7 @@ p1 <- ggplot(subset(ma, hypothesis=="Attention Check Hypothesis\n(Crossover Inte
   geom_point(aes(size = marker_size)) +
   scale_size_manual(name = "", values=c(3,5), guide=FALSE) +
   geom_linerange() + 
-  ylim(-150,301) +
+  ylim(-150,320) +
   geom_vline(xintercept=3,lty=2) +
   facet_grid(.~hypothesis, scales="free") + 
   xlab("Study") + 
@@ -929,7 +931,7 @@ p1 <- ggplot(subset(ma, hypothesis=="Attention Check Hypothesis\n(Crossover Inte
 
 ma$study = factor(ma$study, levels = c("Positive Predictions", "Null Predictions", "", "7", "4", "3", "2bCR", "2aCR", 
                                        "8b", "8a", "6", "5bNoAttn", "5bAttn", "5a", "2bHit", "2aHit", "1c", "1b", "1a"))
-p2 <- ggplot(subset(ma, hypothesis=="Automatic ToM Hypothesis\n(P-A+ > P-A-)"), 
+p2 <- ggplot(subset(ma, hypothesis=="Automatic ToM Hypothesis\n(P-A+ < P-A-)"), 
              aes(x=study, y=es, ymin=ci.l, ymax=ci.h, colour=predicted, group=predicted, shape=predicted)) + 
   geom_hline(yintercept=0,lty=3) +
   geom_point(aes(size = marker_size)) +
