@@ -713,7 +713,8 @@ msAll$n <- aggregate(workerid ~ attentionTime + expt, mssAll, n.unique)$workerid
 
 msAll$expt = factor(msAll$expt)
 levels(msAll$expt) <- c("Study 8a", "Study 8b")
-msAll$expt <- factor(msAll$expt, c("Study 8a", "Study 8b"))
+msAll$expt <- factor(msAll$expt, levels=c("Study 8a", "Study 8b"),
+                     labels=c("Experiment 8a", "Experiment 8b"))
 
 ggplot(aes(x=attentionTime,y=reactionTime,
            ymin=reactionTime-ci.l,ymax=reactionTime+ci.h,

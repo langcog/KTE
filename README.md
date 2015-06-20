@@ -20,9 +20,9 @@ Anonymized data for each study is in "studyX.csv"
 
 ### Experiments
 
-All the experiments used in all the online studies are also included in the repo. (In lab studies will appear here soon)
+All the experiments used in all the studies are also included in the repo.
 
-It takes approximately 20-25 minutes to finish each experiment. If you do finish it, you'll also see a mockup of the data that would've been collected, had this been running live.
+For the online experiments, it takes approximately 20-25 minutes to finish each experiment. If you do finish an experiment, you'll also see a mockup of the data that would've been collected, had it been running live.
 The complete experiments can be loaded using the following links: 
 
 + Study1a/1b: http://rawgit.com/langcog/KTE/master/KTE_Study1a/index.html
@@ -37,5 +37,5 @@ The complete experiments can be loaded using the following links:
 + Study8b: http://rawgit.com/langcog/KTE/master/KTE_Study8b/index.html
 
 The videos used in the experiments can be found in the relevant experiment folders, under videos (e.g. KTE_StudyX/videos). 
-We have included the videos used in the lab experiment (Studies 1c/2b), in the folder "Lab Stimuli".
 
+We have included the videos used in the lab experiment (Studies 1c/2b), in the folder "Lab Stimuli". The experiment scripts (written in Matlab) are provided in "Lab Experiments/StudyXX".
