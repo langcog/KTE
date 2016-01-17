@@ -3,7 +3,8 @@ KTE Replication Project
 
 This repository contains the supporting materials for the following manuscript:
 
-Phillips, J., Ong, D. C., Surtees, A. D. R., Xin, Y., Williams, S., Saxe, R., & Frank, M. C. (in press). A second look at automatic false belief representation: reconsidering Kovács, Téglás, and Endress (2010). _Psychological Science_.
+Phillips, J.\*, Ong, D. C.\*, Surtees, A. D. R., Xin, Y., Williams, S., Saxe, R., & Frank, M. C. (2015). A second look at automatic false belief representation: reconsidering Kovács, Téglás, and Endress (2010). _Psychological Science_, 26, 1353-1367.
+\* equal contribution
 
 The pre-journal formatted manuscript is here: https://github.com/langcog/KTE/blob/master/reconsideringKTE2010_FINAL.pdf?raw=true
 
